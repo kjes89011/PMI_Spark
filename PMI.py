@@ -7,7 +7,7 @@ sc = SparkContext(conf = conf)
 window_size = 5	#左右各5個詞
 
 def window(origin):
-	origin = origin.split("\t")[0].split(" ")
+	origin = origin.split(" ")
 	output = []
 	for Hitword in origin:
 		index = origin.index(Hitword)	
@@ -70,10 +70,10 @@ def PMI(word):
 	return output
 
 #輸入原始文字檔
-text_file = sc.textFile("./PMIInput/CleanCorpus.txt")
+text_file = sc.textFile("./PMIInput/CleanCorpus_chinese.txt")
 
 #WordCount
-WordCounts = text_file.flatMap(lambda line: line.split("\t")[0].split(" ")).map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+WordCounts = text_file.flatMap(lambda line: line.split(" ")).map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
 
 #文章共有幾個不同的詞
 NumberOfWords = len(WordCounts.collect())
@@ -103,7 +103,7 @@ pmi.saveAsTextFile("Word_PMI_Similarity")
 # 	f.write(u'\t'.join(unicode(s) for s in word).encode("utf-8").strip() + '\n')
 # f.close()
 
-#輸出Debug用
+# 輸出Debug用
 # for x in pmi.take(10):
 # 	print x
 
