@@ -1,6 +1,8 @@
 #-*- coding: utf-8 -*-
 from pyspark import SparkContext, SparkConf
-import math
+import math,time
+
+start_time = time.time()
 
 conf = SparkConf().setAppName("SOCPMI")
 sc = SparkContext(conf = conf)
@@ -70,7 +72,7 @@ def PMI(word):
 	return output
 
 #輸入原始文字檔
-text_file = sc.textFile("./PMIInput/CleanCorpus_chinese.txt")
+text_file = sc.textFile("./PMIInput/CleanCorpus.txt")
 
 #WordCount
 WordCounts = text_file.flatMap(lambda line: line.split(" ")).map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
@@ -96,15 +98,20 @@ NeighborCandidate = WordNeighbors.map(lambda q : (q[1][0],[(q[0],q[1][0],q[1][1]
 
 pmi = NeighborCandidate.map(PreProcessingPMI_part1).flatMap(lambda line:line).union(WordNeighbors_WordCounts).reduceByKey(lambda a,b:a+b).map(PreProcessingPMI_part2).flatMap(lambda a:a).map(PMI)
 
+#map from tuple to String and charset to Utf8
+pmi = pmi.map(lambda word:u'\t'.join(unicode(s) for s in word).encode("utf-8").strip())
+
 pmi.saveAsTextFile("Word_PMI_Similarity")
 
-# f = open("./PMIOutput/Word_PMI_Similarity.txt","w")
-# for word in pmi.collect():
-# 	f.write(u'\t'.join(unicode(s) for s in word).encode("utf-8").strip() + '\n')
-# f.close()
+#f = open("./PMIOutput/Word_PMI_Similarity.txt","w")
+#for word in pmi.collect():
+#	f.write(word + '\n')
+#f.close()
 
-# 輸出Debug用
+#輸出Debug用
 # for x in pmi.take(10):
 # 	print x
 
 sc.stop()
+
+print("--- %s seconds ---" % (time.time() - start_time))
