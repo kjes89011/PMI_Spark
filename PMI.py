@@ -4,6 +4,8 @@ import math,time,sys
 
 start_time = time.time()
 
+start_time = time.time()
+
 conf = SparkConf().setAppName("PMI")
 sc = SparkContext(conf = conf)
 window_size = 5	#左右各5個詞
