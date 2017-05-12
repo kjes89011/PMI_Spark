@@ -1,9 +1,10 @@
 # PMI_Spark
-This is a Spark version of Pointwise mutual information
+> This is a Spark version of Pointwise mutual information
 
 Usage
 =============
 
-1. Put Input file into PMIInput directory. One line per document, and each word is separated by spaces.
-2. Run `Spark-submit PMI.py`.
-3. In the code, you can choose to save the OutputFile in HDFS or write a file.
+1. Run `sh PMI_Spark.sh <INPUT_FILE_PATH> <OUTPUT_FILE_PATH>`.
+:::info
+In the code, you can choose to save the OutputFile in HDFS or write a file. But writing file directly will be slow and can't handle large file.
+:::
